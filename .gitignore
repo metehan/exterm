@@ -2,6 +2,7 @@
 /_build/
 /deps/
 .qodo
+.idea
 /docs/ai
 
 # Mix local config

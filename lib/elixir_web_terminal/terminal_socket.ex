@@ -53,8 +53,10 @@ defmodule ElixirWebTerminal.TerminalSocket do
   end
 
   def websocket_info({port, {:data, data}}, %{port: port} = state) do
+    # Convert \n to \r\n for proper terminal display
+    normalized_data = String.replace(data, "\n", "\r\n")
     # Forward shell output back to WebSocket client
-    {:reply, {:text, data}, state}
+    {:reply, {:text, normalized_data}, state}
   end
 
   def websocket_info({port, {:exit_status, _status}}, %{port: port} = state) do

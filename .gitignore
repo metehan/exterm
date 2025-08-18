@@ -1,0 +1,28 @@
+# Elixir build and dependencies
+/_build/
+/deps/
+.qodo
+/docs/ai
+
+# Mix local config
+/.elixir_ls/
+/erl_crash.dump
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE files
+.vscode/
+.idea/
+
+# Misc
+*.swp
+*.swo
+*.bak
+*.tmp

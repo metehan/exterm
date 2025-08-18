@@ -20,14 +20,27 @@ terminal.focus();
 
 // Handle WebSocket connection
 socket.onopen = () => {
-    terminal.write('Connected to shell...\r\n');
+    // terminal.write('Connected to shell...\r\n');
     // Focus the terminal when connected
     terminal.focus();
     // Send initial newline to get the prompt
-    socket.send('\n');
+    socket.send('neofetch\n');
+
+    // Set up client-side keepalive (send a space and backspace every 5 minutes as fallback)
+    setInterval(() => {
+        if (socket.readyState === WebSocket.OPEN) {
+            // Send invisible keepalive (null character that won't affect terminal)
+            socket.send('\x00');
+        }
+    }, 5 * 60 * 1000); // Every 5 minutes
 };
 
 socket.onmessage = (event) => {
+    // Handle ping frames (though most browsers handle this automatically)
+    if (event.data === '') {
+        // This is likely a ping, browsers usually handle pong automatically
+        return;
+    }
     terminal.write(event.data);
 };
 

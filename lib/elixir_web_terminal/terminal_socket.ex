@@ -30,6 +30,9 @@ defmodule ElixirWebTerminal.TerminalSocket do
       :stderr_to_stdout
     ])
 
+    # Set up a heartbeat timer to keep connection alive (every 30 seconds)
+    :timer.send_interval(30_000, self(), :heartbeat)
+
     # Store the port in the state
     {:ok, %{port: port}}
   end
@@ -64,6 +67,11 @@ defmodule ElixirWebTerminal.TerminalSocket do
     end
   end
 
+  def websocket_handle({:pong, _data}, state) do
+    # Handle pong response from client (optional logging)
+    {:ok, state}
+  end
+
   def websocket_handle(_data, state) do
     {:ok, state}
   end
@@ -78,6 +86,11 @@ defmodule ElixirWebTerminal.TerminalSocket do
   def websocket_info({port, {:exit_status, _status}}, %{port: port} = state) do
     # Shell exited, close the WebSocket
     {:reply, {:close, 1000, "Shell exited"}, state}
+  end
+
+  def websocket_info(:heartbeat, state) do
+    # Send a ping frame to keep the connection alive
+    {:reply, {:ping, ""}, state}
   end
 
   def websocket_info(_info, state) do

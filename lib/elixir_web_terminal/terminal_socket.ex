@@ -12,8 +12,19 @@ defmodule ElixirWebTerminal.TerminalSocket do
       path -> path
     end
 
-    # Spawn a shell with interactive options
-    port = Port.open({:spawn, "#{bash_path} -i"}, [
+    # Use script command to create a proper PTY session
+    # script -qefc creates a PTY and runs the command
+    script_cmd = case System.find_executable("script") do
+      nil -> 
+        # Fallback: use bash directly with some PTY-like options
+        "#{bash_path} -i"
+      script_path ->
+        # Use script to create a proper PTY
+        "#{script_path} -qefc '#{bash_path} -i' /dev/null"
+    end
+
+    # Spawn the shell with PTY support
+    port = Port.open({:spawn, script_cmd}, [
       :binary,
       :exit_status,
       :stderr_to_stdout
@@ -24,6 +35,11 @@ defmodule ElixirWebTerminal.TerminalSocket do
   end
 
   def websocket_handle({:text, msg}, state) do
+    # Debug: log control characters
+    if String.contains?(msg, <<3>>) do
+      IO.puts("Received Ctrl+C (ETX) signal")
+    end
+    
     # Convert \r to \n for proper shell handling
     normalized_msg = String.replace(msg, "\r", "\n")
     

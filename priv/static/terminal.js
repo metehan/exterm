@@ -24,7 +24,7 @@ socket.onopen = () => {
     // Focus the terminal when connected
     terminal.focus();
     // Send initial newline to get the prompt
-    socket.send('neofetch\n');
+    //socket.send('neofetch\n');
 
     // Set up client-side keepalive (send a space and backspace every 5 minutes as fallback)
     setInterval(() => {

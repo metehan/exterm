@@ -16,8 +16,10 @@ elixir-web-terminal
 ├── priv
 │   └── static
 │       ├── index.html
+│       ├── terminal.css
 │       ├── terminal.js
-│       └── terminal.css
+│       ├── xterm.css
+│       └── xterm.js
 ├── config
 │   └── config.exs
 ├── mix.exs
@@ -43,11 +45,6 @@ elixir-web-terminal
 - **WebSocket Communication**: The application uses WebSocket to communicate between the browser and the shell.
 - **Terminal Interface**: The terminal is rendered in the browser using xterm.js, providing a responsive and interactive experience.
 - **Shell Interaction**: Users can send commands to the shell and receive output in real-time.
-
-## Dependencies
-
-This project uses the following dependencies:
-- `{:plug_cowboy, "~> 2.7"}`: For handling HTTP requests and WebSocket connections.
 
 ## License
 

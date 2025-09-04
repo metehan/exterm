@@ -2,6 +2,10 @@
 
 This project is a minimal Elixir application that serves a real terminal in the browser using Plug and Cowboy. It allows users to interact with a shell through a web interface.
 
+## Screenshot
+
+![Elixir Web Terminal](doc/dist/elixir_web_terminal.png)
+
 ## Project Structure
 
 ```

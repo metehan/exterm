@@ -1,4 +1,4 @@
-defmodule ElixirWebTerminal.Router do
+defmodule Exterm.Router do
   use Plug.Router
 
   plug(Plug.Logger)
@@ -14,7 +14,7 @@ defmodule ElixirWebTerminal.Router do
   # WebSocket upgrade endpoint
   get "/ws" do
     conn
-    |> Plug.Conn.upgrade_adapter(:websocket, {ElixirWebTerminal.TerminalSocket, [], %{}})
+    |> Plug.Conn.upgrade_adapter(:websocket, {Exterm.TerminalSocket, [], %{}})
   end
 
   match _ do

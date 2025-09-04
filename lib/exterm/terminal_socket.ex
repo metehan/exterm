@@ -1,4 +1,4 @@
-defmodule ElixirWebTerminal.TerminalSocket do
+defmodule Exterm.TerminalSocket do
   @behaviour :cowboy_websocket
 
   def init(request, _state) do
@@ -7,28 +7,33 @@ defmodule ElixirWebTerminal.TerminalSocket do
 
   def websocket_init(_state) do
     # Find bash path - try common locations
-    bash_path = case System.find_executable("bash") do
-      nil -> "/bin/sh"  # fallback to sh if bash not found
-      path -> path
-    end
+    bash_path =
+      case System.find_executable("bash") do
+        # fallback to sh if bash not found
+        nil -> "/bin/sh"
+        path -> path
+      end
 
     # Use script command to create a proper PTY session
     # script -qefc creates a PTY and runs the command
-    script_cmd = case System.find_executable("script") do
-      nil -> 
-        # Fallback: use bash directly with some PTY-like options
-        "#{bash_path} -i"
-      script_path ->
-        # Use script to create a proper PTY
-        "#{script_path} -qefc '#{bash_path} -i' /dev/null"
-    end
+    script_cmd =
+      case System.find_executable("script") do
+        nil ->
+          # Fallback: use bash directly with some PTY-like options
+          "#{bash_path} -i"
+
+        script_path ->
+          # Use script to create a proper PTY
+          "#{script_path} -qefc '#{bash_path} -i' /dev/null"
+      end
 
     # Spawn the shell with PTY support
-    port = Port.open({:spawn, script_cmd}, [
-      :binary,
-      :exit_status,
-      :stderr_to_stdout
-    ])
+    port =
+      Port.open({:spawn, script_cmd}, [
+        :binary,
+        :exit_status,
+        :stderr_to_stdout
+      ])
 
     # Set up a heartbeat timer to keep connection alive (every 30 seconds)
     :timer.send_interval(30_000, self(), :heartbeat)
@@ -42,14 +47,15 @@ defmodule ElixirWebTerminal.TerminalSocket do
     if String.contains?(msg, <<3>>) do
       IO.puts("Received Ctrl+C (ETX) signal")
     end
-    
+
     # Convert \r to \n for proper shell handling
     normalized_msg = String.replace(msg, "\r", "\n")
-    
+
     # Forward incoming WebSocket message to the shell
     case Map.get(state, :port) do
       nil ->
         {:reply, {:text, "Error: Shell not available\r\n"}, state}
+
       port ->
         Port.command(port, normalized_msg)
         {:ok, state}
@@ -61,6 +67,7 @@ defmodule ElixirWebTerminal.TerminalSocket do
     case Map.get(state, :port) do
       nil ->
         {:reply, {:text, "Error: Shell not available\r\n"}, state}
+
       port ->
         Port.command(port, msg)
         {:ok, state}
@@ -103,6 +110,7 @@ defmodule ElixirWebTerminal.TerminalSocket do
       %{port: port} when is_port(port) -> Port.close(port)
       _ -> :ok
     end
+
     :ok
   end
 end

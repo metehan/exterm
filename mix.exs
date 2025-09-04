@@ -1,4 +1,4 @@
-defmodule ElixirWebTerminal.MixProject do
+defmodule Exterm.MixProject do
   use Mix.Project
 
   def project do
@@ -21,7 +21,7 @@ defmodule ElixirWebTerminal.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {ElixirWebTerminal.Application, []}
+      mod: {Exterm.Application, []}
     ]
   end
 

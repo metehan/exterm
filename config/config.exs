@@ -4,5 +4,5 @@ import Config
 config :logger, level: :info
 
 # Application configuration
-config :elixir_web_terminal,
+config :exterm,
   port: 4000
